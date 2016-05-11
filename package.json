@@ -1,0 +1,31 @@
+{
+  "title": "Add GR Book Ratings to Fort Bend County Library",
+  "name": "add-gr-book-ratings-to-fort-bend-county-library",
+  "version": "0.0.2",
+  "description": "Adds the average user rating from GoodReads to the Fort Bend County Library website. Visit www.fortbend.lib.tx.us, perform a search for books, and look for the blue icon to appear at the top-right of your browser. Note that you must register for a free GoodReads developer API key and copy it into this Add-On's options.",
+  "main": "index.js",
+  "author": "Zach Walker (http://www.zachwalker.net)",
+  "engines": {
+    "firefox": ">=38.0a1",
+    "fennec": ">=38.0a1"
+  },
+  "license": "GPL",
+  "keywords": [
+    "goodreads",
+	"fort",
+	"bend",
+	"library",
+	"book",
+	"reviews"
+  ],
+  "permissions": {
+  "cross-domain-content": ["https://www.goodreads.com"]
+  },
+  "preferences": [{
+     "name": "grAPIkey",
+     "title": "GoodReads Developer API Key (restart required)",
+     "description": "Log in to your GoodReads account, go here https://www.goodreads.com/api/keys to get a free developer API key, and paste it here. Then restart Firefox and the Add-On should start working.",
+     "type": "string",
+     "value": "none"
+    }]
+}
