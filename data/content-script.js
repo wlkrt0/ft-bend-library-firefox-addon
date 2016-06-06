@@ -1,40 +1,68 @@
-//loop through books, download goodreads rating, and append
+//loop through books, download goodreads rating and link, and append
 function startGoodReads() {
     $("#loadVSloading").text("Loading");
     $("#badge_progress").text("0 of 0");
+	
     var n = $(".nsm-short-item.nsm-e135").length;
-    //var n = $("#riverlist_1xxx1 li").length; //use this one to search the homepage 
-    var i = 0;
-    var t = setTimeout(getGoodReads, 1000);
+	//use the following line (1 of 3) to add ratings to the library's homepage instead of the search results page
+    //var n = $("#riverlist_1xxx1 li").length;
+    
+	var i = 0;
+    var t = setTimeout(getGoodReads, 1000); //set delay in ms between requests to GR API (note 1 per second limit per API key)
+	
     function getGoodReads() {
         var progress = i + " of " + n;
         $("#badge_progress").text(progress);
         if (i == n) {
-            //show the badge all the time to account for pages that load new content without a complete page refresh
-            //$("#badge1").hide(800);
+            //$("#badge1").hide(800); //show the badge all the time to account for pages that load new content without a complete page refresh
             $("#loadVSloading").text("Load");
             $("#badge_progress").text("");
             endGoodReads();
-            throw new Error('This is not an error. This is just to abort javascript');
+            throw new Error('This is not an error. This is just to abort javascript execution.');
         }
+		
         var li = $(".nsm-short-item.nsm-e135").eq(i);
-        //var li = $("#riverlist_1xxx1 li").eq(i); //use this one to search the homepage
-        var title = li.text();
-        //var title = li.find("a").text(); //use this one to search the homepage
-        console.log(title);
-        //removed author from search criteria because we are getting good matches without it
+        //use the following line (2 of 3) to add ratings to the library's homepage instead of the search results page
+		//var li = $("#riverlist_1xxx1 li").eq(i);
+        
+		var title = li.text();
+		//use the following line (3 of 3) to add ratings to the library's homepage instead of the search results page
+        //var title = li.find("a").text();
+		
+        //commented out following 2 lines to remove author from search criteria because we are getting good matches without it
         //var author = li.find("div").eq(1).text();
         //author = author.replace(title, "");
-        //console.log(author);
+
+		//build the URL for the goodreads API request
 		var url = "https://www.goodreads.com/book/title.xml?key=" + self.options.grAPIkey + "&title=" + title;
-		console.log(url);
+
+		//submit the request to the goodreads API and parse the results
         $.get(url, function (data) {
+			//search the API response for the average rating of the book
             var avgRating = $(data).find("GoodreadsResponse book average_rating").first().text();
-            console.log(avgRating);
+            //search the API response for the link to the goodreads page for the book
             var link = $(data).find("GoodreadsResponse book url").first().text();
-            console.log(link);
-            var ratingHTML = "<span>&nbsp;&nbsp;&nbsp;&nbsp;</span><a target='_blank' href='" + link + "'><span style='color:darkred; font-weight:bolder'><img src='" + self.options.g_iconURL + "' /></span> <span class='badge'>" + avgRating + "</span></a>";
-            $(ratingHTML).hide().appendTo(li).show(200);
+			
+            //build the HTML to be appended inline on the library's search results page
+            //append the HTML inline at var 'li'
+			
+			//the following 2 lines work but are insecure.
+			//var ratingHTML = "<span>&nbsp;&nbsp;&nbsp;&nbsp;</span><a target='_blank' href='" + link + "'><span style='color:darkred; font-weight:bolder'><img src='" + self.options.g_iconURL + "' /></span> <span class='badge'>" + avgRating + "</span></a>";
+			//$(ratingHTML).hide().appendTo(li).show(200); this works but is insecure
+			
+			//secure version of the above two lines
+			li.append(
+				$("<span>").html("&nbsp;&nbsp;&nbsp;&nbsp;").append(
+					$("<a>").attr({target: "_blank", href: link}).append(
+						$("<span>").css({color: "darkred", "font-weight": "bolder"}).append(
+							$("<img>").attr("src", self.options.g_iconURL)
+						).append(
+							$("<span>").attr("class", "badge").text(avgRating)
+						)
+					)
+				)
+			).hide().show(200);
+			
             i++;
             t = setTimeout(getGoodReads, 1000);
         });
@@ -58,6 +86,3 @@ $(document).ready(function () {
 		$("#loadVSloading").text("No API key. Go to Add-on options.");
 	}
 });
-
-//window.onload = addGoodReads();
-//window.onload = alert("loaded");

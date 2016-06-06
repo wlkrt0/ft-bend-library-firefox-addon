@@ -1,4 +1,3 @@
-//var self = require('sdk/self');
 var data = require("sdk/self").data;
 
 //get the api key from the add-on's user preferences
@@ -12,7 +11,7 @@ var pageMod = require("sdk/page-mod");
 pageMod.PageMod({
   include: "http://catalog.fortbend.lib.tx.us/polaris/search/*",
   
-  //simple test alert to show whether the extension is being triggered by the target URL
+  //uncomment the line below for a simple test alert to show whether the extension is being triggered by the target URL
   //contentScript: 'window.alert("Page matches");'
   
   //note that the order of the js files listed below is very important!
